@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
     <title>Sign In - AlphaTonices AP</title>
     <style>
         :root {
@@ -15,12 +16,14 @@
             --primary-invert: #18181b;
             --error-bg: #450a0a;
             --error-text: #fca5a5;
+            --success-bg: #052e16;
+            --success-text: #86efac;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
         body {
-            background-color: var(--bg);
+            background: var(--bg);
             color: var(--text-main);
             display: flex;
             justify-content: center;
@@ -29,39 +32,53 @@
             padding: 1rem;
         }
 
+        button, input { font: inherit; }
+        button:disabled { opacity: .55; cursor: not-allowed; }
+
         .auth-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 2rem;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            max-width: 420px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.4);
         }
 
         .header { text-align: center; margin-bottom: 1.5rem; }
-        .header h1 { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.35rem; }
-        .header p { color: var(--text-muted); font-size: 0.85rem; }
+        .header h1 { font-size: 1.3rem; font-weight: 600; margin-bottom: .35rem; }
+        .header p { color: var(--text-muted); font-size: .85rem; }
 
-        /* Error alert banner */
         .alert {
             display: none;
-            background: var(--error-bg);
-            color: var(--error-text);
-            padding: 0.75rem;
+            padding: .75rem;
             border-radius: 6px;
-            font-size: 0.8rem;
-            line-height: 1.3;
+            font-size: .8rem;
+            line-height: 1.4;
             margin-bottom: 1.25rem;
-            border: 1px solid rgba(252, 165, 165, 0.2);
             word-break: break-word;
         }
+        .alert.error { background: var(--error-bg); color: var(--error-text); border: 1px solid rgba(252,165,165,.2); }
+        .alert.success { background: var(--success-bg); color: var(--success-text); border: 1px solid rgba(134,239,172,.2); }
 
-        /* Tabs */
-        .tabs { display: flex; margin-bottom: 1.5rem; background: #000; border-radius: 8px; padding: 0.25rem; border: 1px solid var(--border); }
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            background: #000;
+            border-radius: 8px;
+            padding: .25rem;
+            border: 1px solid var(--border);
+        }
         .tab-btn {
-            flex: 1; padding: 0.5rem; background: transparent; border: none; color: var(--text-muted);
-            border-radius: 6px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+            flex: 1;
+            padding: .5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            border-radius: 6px;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .2s;
         }
         .tab-btn.active { background: var(--surface); color: var(--text-main); font-weight: 500; }
 
@@ -69,86 +86,242 @@
         .form-view.active { display: block; }
 
         .input-group { margin-bottom: 1rem; }
-        .input-group label { display: block; font-size: 0.8rem; margin-bottom: 0.4rem; color: var(--text-muted); }
+        .input-group label { display: block; font-size: .8rem; margin-bottom: .4rem; color: var(--text-muted); }
         input {
-            width: 100%; padding: 0.75rem; background: #000; border: 1px solid var(--border);
-            border-radius: 6px; color: var(--text-main); font-size: 0.9rem; outline: none;
-            transition: border 0.2s;
+            width: 100%;
+            padding: .75rem;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: .9rem;
+            outline: none;
+            transition: border .2s;
         }
         input:focus { border-color: #52525b; }
 
         .btn {
-            width: 100%; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.6rem;
-            border: none; transition: all 0.2s; margin-bottom: 0.75rem;
+            width: 100%;
+            padding: .75rem;
+            border-radius: 6px;
+            font-size: .875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: .6rem;
+            border: none;
+            transition: all .2s;
+            margin-bottom: .75rem;
         }
         .btn-primary { background: var(--primary); color: var(--primary-invert); }
-        .btn-primary:hover { background: #e4e4e7; }
+        .btn-primary:hover:not(:disabled) { background: #e4e4e7; }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover { background: #27272a; }
+        .btn-outline:hover:not(:disabled) { background: #27272a; }
+        .btn-link {
+            display: block;
+            width: max-content;
+            margin: -.15rem 0 1rem auto;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: .78rem;
+            cursor: pointer;
+        }
+        .btn-link:hover { color: var(--text-main); text-decoration: underline; }
 
         .divider {
-            display: flex; align-items: center; margin: 1.25rem 0; color: var(--text-muted); font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            margin: 1.25rem 0;
+            color: var(--text-muted);
+            font-size: .75rem;
         }
         .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
         .divider:not(:empty)::before { margin-right: 1rem; }
         .divider:not(:empty)::after { margin-left: 1rem; }
-    #verifying-screen{display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);justify-content:center;align-items:center;padding:1rem}#verifying-screen.show{display:flex}.verifying-card{width:100%;max-width:420px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2rem;box-shadow:0 10px 40px rgba(0,0,0,.45)}.verifying-card h2{font-size:1.05rem;margin:1rem 0 .5rem}.verifying-card p{color:var(--text-muted);font-size:.85rem;line-height:1.5}.spinner{width:34px;height:34px;margin:auto;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.password-rule,.code-notice{display:block;margin-top:.35rem;color:var(--text-muted);font-size:.72rem;line-height:1.4}.code-notice{text-align:center}</style>
+
+        .password-rule, .code-notice {
+            display: block;
+            margin: -.55rem 0 1rem;
+            color: var(--text-muted);
+            font-size: .72rem;
+            line-height: 1.4;
+        }
+        .code-notice { margin: .2rem 0 0; text-align: center; }
+
+        .progress-wrap {
+            display: none;
+            margin: .25rem 0 1rem;
+        }
+        .progress-wrap.show { display: block; }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: .72rem;
+            margin-bottom: .4rem;
+        }
+        .progress-track {
+            height: 6px;
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            border-radius: inherit;
+            transition: width .15s ease;
+        }
+
+        .verification-panel { display: none; text-align: center; }
+        .verification-panel.show { display: block; }
+        .verification-panel h2 { font-size: 1rem; margin-bottom: .6rem; }
+        .verification-panel p { color: var(--text-muted); font-size: .82rem; line-height: 1.5; margin-bottom: 1rem; }
+
+        #verifying-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--bg);
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        #verifying-screen.show { display: flex; }
+        .verifying-card {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,.45);
+        }
+        .verifying-card h2 { font-size: 1.05rem; margin: 1rem 0 .5rem; }
+        .verifying-card p { color: var(--text-muted); font-size: .85rem; line-height: 1.5; }
+        .spinner {
+            width: 34px;
+            height: 34px;
+            margin: auto;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+        .small-spinner {
+            width: 16px;
+            height: 16px;
+            border-width: 2px;
+            margin: 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 460px) {
+            .auth-card { padding: 1.35rem; }
+        }
+    </style>
 </head>
 <body>
-<div id="verifying-screen"><div class="verifying-card"><div class="spinner"></div><h2>Wait, we are verifying your connection.</h2><p>Please wait while we securely verify your connection.</p></div></div>
+    <div id="verifying-screen" aria-live="polite">
+        <div class="verifying-card">
+            <div class="spinner"></div>
+            <h2>Wait, we are verifying your connection.</h2>
+            <p>Please wait while we securely verify your connection.</p>
+        </div>
+    </div>
 
-    <div class="auth-card">
+    <main class="auth-card">
         <div class="header">
             <h1>AlphaTonices AP</h1>
             <p>Access Gateway</p>
         </div>
 
-        <div class="alert" id="error-alert"></div>
+        <div class="alert" id="message-alert" role="alert"></div>
 
-        <div class="tabs">
-            <button class="tab-btn active" id="tab-btn-account">Account</button>
-            <button class="tab-btn" id="tab-btn-code">Access Code</button>
+        <div class="tabs" id="main-tabs">
+            <button class="tab-btn active" id="tab-btn-account" type="button">Account</button>
+            <button class="tab-btn" id="tab-btn-code" type="button">Access Code</button>
         </div>
 
-        <!-- Account Tab -->
-        <div id="view-account" class="form-view active">
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="email" placeholder="name@example.com">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="••••••••" minlength="8" autocomplete="current-password">
-            </div>
-            <small class="password-rule">Password must be at least 8 characters and contain at least one uppercase letter.</small>
-            <button class="btn btn-primary" id="btn-email-login">Continue with Email</button>
+        <section id="view-account" class="form-view active">
+            <div id="account-form">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="name@example.com" autocomplete="email">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" minlength="8" autocomplete="current-password">
+                </div>
+                <small class="password-rule">Password must be at least 8 characters and contain at least one uppercase letter.</small>
+                <button class="btn btn-primary" id="btn-email-login" type="button">Continue with Email</button>
+                <button class="btn-link" id="btn-forgot-password" type="button">Forgot password?</button>
 
-            <div class="divider">OR</div>
+                <div class="divider">OR</div>
 
-            <button class="btn btn-outline" id="btn-google">
-                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                Google
-            </button>
-            <button class="btn btn-outline" id="btn-github">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                GitHub
-            </button>
-        </div>
-
-        <!-- Code Tab -->
-        <div id="view-code" class="form-view">
-            <div class="input-group">
-                <label>Clearance Code</label>
-                <input type="password" id="access-code" placeholder="Enter access code">
+                <button class="btn btn-outline" id="btn-google" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    Google
+                </button>
+                <button class="btn btn-outline" id="btn-github" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    GitHub
+                </button>
             </div>
-            <button class="btn btn-primary" id="btn-code-login">Validate & Enter</button><p class="code-notice">Access-code accounts are temporary and are automatically deleted after 30 days.</p>
-        </div>
-    </div>
+
+            <div class="verification-panel" id="verification-panel">
+                <h2>Verify your email</h2>
+                <p id="verification-text">We sent a verification email. Open it and verify your email address before continuing.</p>
+                <button class="btn btn-primary" id="btn-check-verification" type="button">I've verified my email</button>
+                <button class="btn btn-outline" id="btn-resend-verification" type="button">Resend verification email</button>
+                <button class="btn-link" id="btn-back-account" type="button">Back to sign in</button>
+            </div>
+        </section>
+
+        <section id="view-code" class="form-view">
+            <div class="input-group">
+                <label for="access-code">Clearance Code</label>
+                <input type="password" id="access-code" placeholder="Enter access code" autocomplete="off">
+            </div>
+
+            <div class="progress-wrap" id="hash-progress-wrap" aria-live="polite">
+                <div class="progress-label">
+                    <span id="hash-progress-text">Hashing access code securely…</span>
+                    <span id="hash-progress-percent">0%</span>
+                </div>
+                <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress-bar" id="hash-progress-bar"></div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="btn-code-login" type="button">Validate &amp; Enter</button>
+            <p class="code-notice">Access-code accounts are temporary and are automatically deleted after 30 days.</p>
+        </section>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import {
+            getAuth,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            sendEmailVerification,
+            sendPasswordResetEmail,
+            signInWithPopup,
+            GoogleAuthProvider,
+            GithubAuthProvider,
+            signInAnonymously,
+            reload,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -165,33 +338,62 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const errorAlert = document.getElementById('error-alert');
+        const alertBox = document.getElementById("message-alert");
+        const accountForm = document.getElementById("account-form");
+        const verificationPanel = document.getElementById("verification-panel");
+        const verificationText = document.getElementById("verification-text");
+        const verifyingScreen = document.getElementById("verifying-screen");
 
-        function showError(msg) {
-            errorAlert.textContent = msg;
-            errorAlert.style.display = 'block';
-            console.error("[Auth Error]", msg);
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const accessCodeInput = document.getElementById("access-code");
+        const emailLoginButton = document.getElementById("btn-email-login");
+        const forgotButton = document.getElementById("btn-forgot-password");
+        const resendVerificationButton = document.getElementById("btn-resend-verification");
+        const checkVerificationButton = document.getElementById("btn-check-verification");
+        const backAccountButton = document.getElementById("btn-back-account");
+        const codeLoginButton = document.getElementById("btn-code-login");
+        const hashProgressWrap = document.getElementById("hash-progress-wrap");
+        const hashProgressBar = document.getElementById("hash-progress-bar");
+        const hashProgressPercent = document.getElementById("hash-progress-percent");
+        const hashProgressText = document.getElementById("hash-progress-text");
+        const progressTrack = hashProgressWrap.querySelector(".progress-track");
+
+        function showMessage(message, type = "error") {
+            alertBox.textContent = message;
+            alertBox.className = `alert ${type}`;
+            alertBox.style.display = "block";
         }
 
-        function clearError() {
-            errorAlert.textContent = '';
-            errorAlert.style.display = 'none';
+        function clearMessage() {
+            alertBox.textContent = "";
+            alertBox.style.display = "none";
+            alertBox.className = "alert";
         }
 
         function formatAuthError(err) {
             const messages = {
-                'auth/invalid-credential': 'Incorrect email or password.',
-                'auth/wrong-password': 'Incorrect email or password.',
-                'auth/invalid-email': 'Please enter a valid email address.',
-                'auth/email-already-in-use': 'An account with this email already exists. Please sign in.',
-                'auth/weak-password': 'Password must be at least 6 characters.',
-                'auth/popup-blocked': 'The browser blocked the sign-in popup. Please allow popups for this page.',
-                'auth/popup-closed-by-user': 'The sign-in popup was closed.',
-                'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Authentication.',
-                'auth/unauthorized-domain': 'This website domain is not authorized in Firebase Authentication.',
-                'auth/network-request-failed': 'Network error. Check your internet connection and try again.'
+                "auth/invalid-credential": "Incorrect email or password.",
+                "auth/wrong-password": "Incorrect email or password.",
+                "auth/user-not-found": "No account was found for this email.",
+                "auth/invalid-email": "Please enter a valid email address.",
+                "auth/email-already-in-use": "An account with this email already exists. Please sign in.",
+                "auth/weak-password": "Password must be at least 6 characters.",
+                "auth/popup-blocked": "The browser blocked the sign-in popup. Please allow popups for this page.",
+                "auth/popup-closed-by-user": "The sign-in popup was closed.",
+                "auth/operation-not-allowed": "This sign-in method is not enabled in Firebase Authentication.",
+                "auth/unauthorized-domain": "This website domain is not authorized in Firebase Authentication.",
+                "auth/network-request-failed": "Network error. Check your internet connection and try again.",
+                "auth/too-many-requests": "Too many attempts. Please wait a little and try again.",
+                "auth/missing-email": "Please enter your email address first."
             };
-            return messages[err.code] || (err.code ? err.code + ': ' + err.message : 'Authentication failed.');
+            return messages[err.code] || (err.code ? `${err.code}: ${err.message}` : "Authentication failed.");
+        }
+
+        function validatePassword(password) {
+            if (password.length < 8) return "Password must be at least 8 characters long.";
+            if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
+            return null;
         }
 
         async function logSessionAndRedirect(user, method) {
@@ -202,116 +404,276 @@
                     authMethod: method,
                     lastLogin: serverTimestamp()
                 }, { merge: true });
-            } catch (e) {
-                console.warn("Firestore write skipped:", e.message);
+            } catch (err) {
+                console.warn("Firestore write skipped:", err.message);
             }
-            document.getElementById("verifying-screen").classList.add("show");
+
+            verifyingScreen.classList.add("show");
             window.location.href = "https://mymap.icu/verify.php?verify=YYE9JC";
         }
 
-        // SHA-256 for code validation
-        async function hashString(str) {
-            const buffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-            return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        function setAccountButtonsDisabled(disabled) {
+            emailLoginButton.disabled = disabled;
+            forgotButton.disabled = disabled;
         }
-        
-        // SHA-256 digest of "AlphaTonicesProject"
-        const TARGET_HASH = "a9c682f763d1fd68971e80a1ff40c41e8bf71c8823b873a4e6ca9c3409e11562";
 
-        // Tab Navigation
-        const tabAccount = document.getElementById('tab-btn-account');
-        const tabCode = document.getElementById('tab-btn-code');
-        const viewAccount = document.getElementById('view-account');
-        const viewCode = document.getElementById('view-code');
+        async function sendVerification(user) {
+            if (!user || !user.email) throw new Error("A valid email account is required.");
+            await sendEmailVerification(user);
+        }
 
-        tabAccount.addEventListener('click', () => {
-            clearError();
-            tabAccount.classList.add('active');
-            tabCode.classList.remove('active');
-            viewAccount.classList.add('active');
-            viewCode.classList.remove('active');
-        });
+        async function showEmailVerification(user, isNewAccount = false) {
+            accountForm.style.display = "none";
+            verificationPanel.classList.add("show");
+            verificationText.textContent = isNewAccount
+                ? `A verification email was sent to ${user.email}. Open it and verify your email address, then return here.`
+                : `A verification email was sent to ${user.email}. Verify your email address, then return here.`;
+        }
 
-        tabCode.addEventListener('click', () => {
-            clearError();
-            tabCode.classList.add('active');
-            tabAccount.classList.remove('active');
-            viewCode.classList.add('active');
-            viewAccount.classList.remove('active');
-        });
+        // Firebase password reset: the secure reset email contains the password-change flow.
+        forgotButton.addEventListener("click", async () => {
+            clearMessage();
+            const email = emailInput.value.trim();
+            if (!email) {
+                showMessage("Enter your email address first, then tap Forgot password.");
+                emailInput.focus();
+                return;
+            }
+            if (!emailInput.validity.valid) {
+                showMessage("Please enter a valid email address.");
+                emailInput.focus();
+                return;
+            }
 
-        // Email / Password
-        document.getElementById('btn-email-login').addEventListener('click', async () => {
-            clearError();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if (!email || !password) return showError("Email and password are required.");
-            if (password.length < 8) return showError("Password must be at least 8 characters long.");
-            if (!/[A-Z]/.test(password)) return showError("Password must contain at least one uppercase letter.");
-
+            forgotButton.disabled = true;
+            forgotButton.textContent = "Sending reset email…";
             try {
-                const cred = await signInWithEmailAndPassword(auth, email, password);
-                await logSessionAndRedirect(cred.user, "email");
+                await sendPasswordResetEmail(auth, email);
+                showMessage("Password reset email sent. Open the email to securely create your new password.", "success");
             } catch (err) {
-                if (err.code === 'auth/user-not-found') {
-                    try {
-                        const cred = await createUserWithEmailAndPassword(auth, email, password);
-                        await logSessionAndRedirect(cred.user, "email_registration");
-                    } catch (regErr) {
-                        showError(formatAuthError(regErr));
-                    }
-                } else {
-                    showError(formatAuthError(err));
-                }
+                showMessage(formatAuthError(err));
+            } finally {
+                forgotButton.disabled = false;
+                forgotButton.textContent = "Forgot password?";
             }
         });
 
-        // Google Login
-        document.getElementById('btn-google').addEventListener('click', async () => {
-            clearError();
-            const provider = new GoogleAuthProvider();
-            try { 
-                const cred = await signInWithPopup(auth, provider); 
-                await logSessionAndRedirect(cred.user, "google");
-            } catch (err) {
-                if (err.code !== 'auth/popup-closed-by-user') {
-                    showError(formatAuthError(err));
+        // Email/password sign-in. A verification email is sent after a successful password check.
+        emailLoginButton.addEventListener("click", async () => {
+            clearMessage();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) return showMessage("Email and password are required.");
+            if (!emailInput.validity.valid) return showMessage("Please enter a valid email address.");
+            const passwordError = validatePassword(password);
+            if (passwordError) return showMessage(passwordError);
+
+            setAccountButtonsDisabled(true);
+            emailLoginButton.textContent = "Checking account…";
+
+            try {
+                let credential;
+                let isNewAccount = false;
+
+                try {
+                    credential = await signInWithEmailAndPassword(auth, email, password);
+                } catch (err) {
+                    // Only create an account when Firebase explicitly says the account does not exist.
+                    if (err.code !== "auth/user-not-found") throw err;
+                    credential = await createUserWithEmailAndPassword(auth, email, password);
+                    isNewAccount = true;
                 }
+
+                const user = credential.user;
+
+                // Always send a fresh verification email on email/password login.
+                // For already verified users, login continues immediately after the email is sent.
+                if (!user.emailVerified) {
+                    await sendVerification(user);
+                    await showEmailVerification(user, isNewAccount);
+                    showMessage("Verification email sent. Verify your email before continuing.", "success");
+                    return;
+                }
+
+                // Verified users also receive a verification email as requested, but do not get blocked.
+                try {
+                    await sendVerification(user);
+                } catch (verificationError) {
+                    console.warn("Verification email could not be sent:", verificationError.message);
+                }
+
+                await logSessionAndRedirect(user, "email");
+            } catch (err) {
+                showMessage(formatAuthError(err));
+            } finally {
+                setAccountButtonsDisabled(false);
+                emailLoginButton.textContent = "Continue with Email";
+            }
+        });
+
+        // Check the email again after the user clicks the verification link.
+        checkVerificationButton.addEventListener("click", async () => {
+            clearMessage();
+            checkVerificationButton.disabled = true;
+            checkVerificationButton.textContent = "Checking…";
+            try {
+                if (!auth.currentUser) {
+                    throw new Error("Your sign-in session expired. Please sign in again.");
+                }
+                await reload(auth.currentUser);
+                if (!auth.currentUser.emailVerified) {
+                    showMessage("Your email is not verified yet. Open the verification email and try again.");
+                    return;
+                }
+                await logSessionAndRedirect(auth.currentUser, "email_verified");
+            } catch (err) {
+                showMessage(err.code ? formatAuthError(err) : err.message);
+            } finally {
+                checkVerificationButton.disabled = false;
+                checkVerificationButton.textContent = "I've verified my email";
+            }
+        });
+
+        resendVerificationButton.addEventListener("click", async () => {
+            clearMessage();
+            if (!auth.currentUser) {
+                showMessage("Your sign-in session expired. Please sign in again.");
+                return;
+            }
+            resendVerificationButton.disabled = true;
+            resendVerificationButton.textContent = "Sending…";
+            try {
+                await sendVerification(auth.currentUser);
+                showMessage("A new verification email has been sent.", "success");
+            } catch (err) {
+                showMessage(formatAuthError(err));
+            } finally {
+                resendVerificationButton.disabled = false;
+                resendVerificationButton.textContent = "Resend verification email";
+            }
+        });
+
+        backAccountButton.addEventListener("click", async () => {
+            clearMessage();
+            try { await signOut(auth); } catch (err) { console.warn(err); }
+            verificationPanel.classList.remove("show");
+            accountForm.style.display = "block";
+        });
+
+        // Google Login
+        document.getElementById("btn-google").addEventListener("click", async () => {
+            clearMessage();
+            const provider = new GoogleAuthProvider();
+            try {
+                const credential = await signInWithPopup(auth, provider);
+                await logSessionAndRedirect(credential.user, "google");
+            } catch (err) {
+                if (err.code !== "auth/popup-closed-by-user") showMessage(formatAuthError(err));
             }
         });
 
         // GitHub Login
-        document.getElementById('btn-github').addEventListener('click', async () => {
-            clearError();
+        document.getElementById("btn-github").addEventListener("click", async () => {
+            clearMessage();
             const provider = new GithubAuthProvider();
-            try { 
-                const cred = await signInWithPopup(auth, provider); 
-                await logSessionAndRedirect(cred.user, "github");
+            try {
+                const credential = await signInWithPopup(auth, provider);
+                await logSessionAndRedirect(credential.user, "github");
             } catch (err) {
-                if (err.code !== 'auth/popup-closed-by-user') {
-                    showError(formatAuthError(err));
+                if (err.code !== "auth/popup-closed-by-user") showMessage(formatAuthError(err));
+            }
+        });
+
+        // SHA-256 for access-code validation.
+        async function hashString(str) {
+            const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+            return Array.from(new Uint8Array(buffer))
+                .map(byte => byte.toString(16).padStart(2, "0"))
+                .join("");
+        }
+
+        const TARGET_HASH = "a9c682f763d1fd68971e80a1ff40c41e8bf71c8823b873a4e6ca9c3409e11562";
+
+        function setHashProgress(value, text) {
+            const percent = Math.max(0, Math.min(100, Math.round(value)));
+            hashProgressBar.style.width = `${percent}%`;
+            hashProgressPercent.textContent = `${percent}%`;
+            hashProgressText.textContent = text;
+            progressTrack.setAttribute("aria-valuenow", String(percent));
+        }
+
+        function showHashProgress() {
+            hashProgressWrap.classList.add("show");
+            setHashProgress(0, "Preparing secure hash…");
+        }
+
+        function hideHashProgress() {
+            hashProgressWrap.classList.remove("show");
+            setHashProgress(0, "Hashing access code securely…");
+        }
+
+        // Access Code (Anonymous Auth) with visible hashing progress.
+        codeLoginButton.addEventListener("click", async () => {
+            clearMessage();
+            const code = accessCodeInput.value.trim();
+            if (!code) return showMessage("Please enter the clearance access code.");
+
+            codeLoginButton.disabled = true;
+            accessCodeInput.disabled = true;
+            showHashProgress();
+
+            try {
+                // The digest itself is extremely fast, so the progress UI is animated briefly
+                // to make the secure hashing step visibly clear to the user.
+                setHashProgress(15, "Preparing secure hash…");
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                setHashProgress(40, "Hashing access code…");
+                await new Promise(resolve => setTimeout(resolve, 80));
+                const hashedInput = await hashString(code);
+                setHashProgress(85, "Comparing secure hash…");
+                await new Promise(resolve => setTimeout(resolve, 80));
+
+                if (hashedInput !== TARGET_HASH) {
+                    setHashProgress(100, "Hash complete — access code rejected.");
+                    showMessage("Invalid access code.");
+                    return;
+                }
+
+                setHashProgress(100, "Hash verified — signing you in…");
+                const credential = await signInAnonymously(auth);
+                await logSessionAndRedirect(credential.user, "anonymous_code");
+            } catch (err) {
+                showMessage(formatAuthError(err));
+            } finally {
+                codeLoginButton.disabled = false;
+                accessCodeInput.disabled = false;
+                if (!verifyingScreen.classList.contains("show")) {
+                    setTimeout(hideHashProgress, 700);
                 }
             }
         });
 
-        // Access Code (Anonymous Auth)
-        document.getElementById('btn-code-login').addEventListener('click', async () => {
-            clearError();
-            const code = document.getElementById('access-code').value.trim();
-            if (!code) return showError("Please enter the clearance access code.");
-            
-            try {
-                const hashedInput = await hashString(code);
-                if (hashedInput !== TARGET_HASH) {
-                    showError("Invalid access code.");
-                    return;
-                }
+        // Main tab navigation.
+        const tabAccount = document.getElementById("tab-btn-account");
+        const tabCode = document.getElementById("tab-btn-code");
+        const viewAccount = document.getElementById("view-account");
+        const viewCode = document.getElementById("view-code");
 
-                const cred = await signInAnonymously(auth);
-                await logSessionAndRedirect(cred.user, "anonymous_code");
-            } catch (err) {
-                showError(formatAuthError(err));
-            }
+        tabAccount.addEventListener("click", () => {
+            clearMessage();
+            tabAccount.classList.add("active");
+            tabCode.classList.remove("active");
+            viewAccount.classList.add("active");
+            viewCode.classList.remove("active");
+        });
+
+        tabCode.addEventListener("click", () => {
+            clearMessage();
+            tabCode.classList.add("active");
+            tabAccount.classList.remove("active");
+            viewCode.classList.add("active");
+            viewAccount.classList.remove("active");
         });
     </script>
 </body>
