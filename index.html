@@ -224,6 +224,16 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+
+        .create-account-footer { margin-top: 1.25rem; }
+        .footer-divider { display:flex; align-items:center; gap:.7rem; margin:1rem 0; color:var(--text-muted); font-size:.72rem; }
+        .footer-divider::before,.footer-divider::after { content:""; flex:1; border-top:1px solid var(--border); }
+        .create-account-panel { margin-top:1rem; }
+        .create-account-panel[hidden] { display:none; }
+        .create-account-panel h2 { font-size:1rem; margin-bottom:.45rem; }
+        .create-account-description { color:var(--text-muted); font-size:.78rem; line-height:1.45; margin-bottom:1rem; }
+        .create-account-back { margin:.2rem auto 0; }
+
         @media (max-width: 460px) {
             .auth-card { padding: 1.35rem; }
         }
@@ -305,6 +315,28 @@
             <button class="btn btn-primary" id="btn-code-login" type="button">Validate &amp; Enter</button>
             <p class="code-notice">Access-code accounts are temporary and are automatically deleted after 30 days.</p>
         </section>
+
+        <section class="create-account-footer" id="create-account-footer">
+            <div class="footer-divider"><span>New here?</span></div>
+            <button class="btn btn-outline" id="btn-show-create-account" type="button">Create New Account</button>
+        </section>
+
+        <section class="create-account-panel" id="create-account-panel" hidden>
+            <h2>Create New Account</h2>
+            <p class="create-account-description">Create an email account and verify your email before you can continue.</p>
+            <div class="input-group">
+                <label for="new-account-email">Email Address</label>
+                <input type="email" id="new-account-email" placeholder="name@example.com" autocomplete="email">
+            </div>
+            <div class="input-group">
+                <label for="new-account-password">Password</label>
+                <input type="password" id="new-account-password" placeholder="••••••••" minlength="8" autocomplete="new-password">
+            </div>
+            <small class="password-rule">Password must be at least 8 characters and contain at least one uppercase letter.</small>
+            <button class="btn btn-primary" id="btn-create-account" type="button">Create Account &amp; Verify Email</button>
+            <button class="btn-link create-account-back" id="btn-hide-create-account" type="button">Back to sign in</button>
+        </section>
+
     </main>
 
     <script type="module">
@@ -675,6 +707,62 @@
             viewCode.classList.add("active");
             viewAccount.classList.remove("active");
         });
+
+        // Dedicated new-account flow.
+        const createAccountFooter = document.getElementById("create-account-footer");
+        const createAccountPanel = document.getElementById("create-account-panel");
+        const showCreateAccountButton = document.getElementById("btn-show-create-account");
+        const hideCreateAccountButton = document.getElementById("btn-hide-create-account");
+        const createAccountButton = document.getElementById("btn-create-account");
+        const newAccountEmail = document.getElementById("new-account-email");
+        const newAccountPassword = document.getElementById("new-account-password");
+
+        showCreateAccountButton.addEventListener("click", () => {
+            clearMessage();
+            createAccountFooter.hidden = true;
+            createAccountPanel.hidden = false;
+            newAccountEmail.focus();
+        });
+
+        hideCreateAccountButton.addEventListener("click", () => {
+            clearMessage();
+            createAccountPanel.hidden = true;
+            createAccountFooter.hidden = false;
+        });
+
+        createAccountButton.addEventListener("click", async () => {
+            clearMessage();
+            const email = newAccountEmail.value.trim();
+            const password = newAccountPassword.value;
+            if (!email || !password) return showMessage("Email and password are required.");
+            if (!newAccountEmail.validity.valid) return showMessage("Please enter a valid email address.");
+
+            const passwordError = validatePassword(password);
+            if (passwordError) return showMessage(passwordError);
+
+            createAccountButton.disabled = true;
+            createAccountButton.textContent = "Creating account…";
+
+            try {
+                const credential = await createUserWithEmailAndPassword(auth, email, password);
+                await sendVerification(credential.user);
+
+                accountForm.style.display = "none";
+                verificationPanel.classList.add("show");
+                verificationText.textContent =
+                    `A verification email was sent to ${email}. Open it, verify your email address, then return here and tap "I've verified my email".`;
+
+                createAccountPanel.hidden = true;
+                createAccountFooter.hidden = false;
+                showMessage("Account created. Verification email sent.", "success");
+            } catch (err) {
+                showMessage(formatAuthError(err));
+            } finally {
+                createAccountButton.disabled = false;
+                createAccountButton.textContent = "Create Account & Verify Email";
+            }
+        });
+
     </script>
 </body>
 </html>
