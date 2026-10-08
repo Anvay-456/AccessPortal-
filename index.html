@@ -1,327 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="dark">
-    <title>Sign In - AlphaTonices AP</title>
-    <style>
-        :root {
-            --bg: #09090b;
-            --surface: #18181b;
-            --border: #27272a;
-            --text-main: #f4f4f5;
-            --text-muted: #a1a1aa;
-            --primary: #fafafa;
-            --primary-invert: #18181b;
-            --error-bg: #450a0a;
-            --error-text: #fca5a5;
-            --success-bg: #052e16;
-            --success-text: #86efac;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0f1115">
+<title>Sign In - AlphaTonices AP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+/* Apply saved theme before first paint (no flash) */
+(function(){var t="dark";try{var s=localStorage.getItem("alphaTonicesTheme");if(s==="light"||s==="dark")t=s;}catch(e){}document.documentElement.setAttribute("data-theme",t);})();
+</script>
+<style>
+:root{--ease:cubic-bezier(.65,0,.35,1);--out:cubic-bezier(.22,1,.36,1);--r:16px;
+--sans:"Manrope",-apple-system,"Segoe UI",Roboto,sans-serif;color-scheme:dark;
+--bg:#0f1115;--glow1:rgba(120,140,255,.11);--glow2:rgba(255,255,255,.03);--surface:rgba(24,26,32,.86);--solid:#181a20;--field:#12141a;
+--border:rgba(255,255,255,.1);--text-main:#f2f3f5;--text-muted:#9aa0ab;
+--accent:#aab6ff;--accent-hi:#c9d1ff;--accent-lo:#7b8cf5;--ring:rgba(170,182,255,.28);--tab:rgba(255,255,255,.07);
+--primary:#f2f3f5;--on-primary:#111318;--pshadow:0 8px 20px -10px rgba(0,0,0,.7);--shadow:0 24px 60px -24px rgba(0,0,0,.75);
+--error-bg:rgba(150,25,55,.3);--error-text:#ffb4c2;--success-bg:rgba(25,120,80,.28);--success-text:#9cf0c6}
+:root[data-theme=light]{color-scheme:light;--bg:#f5f6f8;--glow1:rgba(100,120,255,.12);--glow2:rgba(0,0,0,.02);
+--surface:rgba(255,255,255,.92);--solid:#fff;--field:#f7f8fa;--border:rgba(20,22,28,.12);--text-main:#14161c;--text-muted:#5b6270;
+--accent:#3f51c7;--accent-hi:#5b6ee0;--accent-lo:#3f51c7;--ring:rgba(63,81,199,.22);--tab:rgba(20,22,28,.06);
+--primary:#14161c;--on-primary:#fff;--pshadow:0 8px 20px -10px rgba(20,22,28,.5);--shadow:0 24px 60px -30px rgba(30,40,80,.28);
+--error-bg:#fde8ec;--error-text:#9b1c3a;--success-bg:#e3f7ec;--success-text:#13663f}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{font-family:var(--sans);color:var(--text-main);display:flex;justify-content:center;align-items:center;min-height:100vh;min-height:100dvh;padding:1rem}
+button,input{font:inherit}
+button:disabled,input:disabled{opacity:.55;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-        body {
-            background: var(--bg);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1rem;
-        }
+.backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(60rem 40rem at 12% -10%,var(--glow1),transparent 60%),radial-gradient(50rem 36rem at 105% 110%,var(--glow2),transparent 60%),var(--bg)}
 
-        button, input { font: inherit; }
-        button:disabled { opacity: .55; cursor: not-allowed; }
+/* Theme toggle */
+.theme-toggle{position:fixed;top:max(1rem,env(safe-area-inset-top));right:max(1rem,env(safe-area-inset-right));z-index:10000;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+background:var(--solid);border:1px solid var(--border);color:var(--accent);cursor:pointer;box-shadow:0 8px 24px -10px rgba(0,0,0,.5);transition:transform .45s var(--out),border-color .3s,background-color .4s}
+.theme-toggle:hover{transform:rotate(20deg) scale(1.07);border-color:var(--accent)}
+.theme-toggle:active{transform:scale(.94)}
+.theme-toggle svg{position:absolute;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .6s var(--out),opacity .35s}
+.icon-moon{opacity:0;transform:rotate(90deg) scale(.4)}
+[data-theme=light] .icon-sun{opacity:0;transform:rotate(-90deg) scale(.4)}
+[data-theme=light] .icon-moon{opacity:1;transform:none}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}
+.theme-fade,.theme-fade *{transition:background-color .45s,color .45s,border-color .45s,box-shadow .45s!important}
 
-        .auth-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 4px 20px rgba(0,0,0,.4);
-        }
+/* Card: gold hairline frame + inner keyline */
+.auth-card{position:relative;border:1px solid var(--border);width:100%;max-width:440px;padding:2.4rem 2.1rem 2rem;background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);
+-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);animation:cardIn .9s var(--out) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) scale(.985)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 
-        .header { text-align: center; margin-bottom: 1.5rem; }
-        .header h1 { font-size: 1.3rem; font-weight: 600; margin-bottom: .35rem; }
-        .header p { color: var(--text-muted); font-size: .85rem; }
+.header{text-align:center;margin-bottom:1.6rem}
+.crest{width:48px;height:48px;margin:0 auto 1rem;color:var(--text-main)}
+.crest svg{width:100%;height:100%;overflow:visible;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.crest .ring{stroke-dasharray:1;stroke-dashoffset:0;animation:draw 1.2s .2s var(--ease) both}
+.crest .jewel{animation:fadeUp .8s .8s both}
+.header h1{font-family:var(--sans);font-size:1.65rem;font-weight:700;line-height:1.15;letter-spacing:-.02em;margin-bottom:.3rem;
+color:var(--text-main);animation:fadeUp .8s .5s both}
+.header p{color:var(--text-muted);font-size:.9rem;animation:fadeUp .8s .65s both}
 
-        .alert {
-            display: none;
-            padding: .75rem;
-            border-radius: 6px;
-            font-size: .8rem;
-            line-height: 1.4;
-            margin-bottom: 1.25rem;
-            word-break: break-word;
-        }
-        .alert.error { background: var(--error-bg); color: var(--error-text); border: 1px solid rgba(252,165,165,.2); }
-        .alert.success { background: var(--success-bg); color: var(--success-text); border: 1px solid rgba(134,239,172,.2); }
+.alert{display:none;padding:.75rem .9rem;border-radius:10px;font-size:.82rem;line-height:1.45;margin-bottom:1.25rem;word-break:break-word}
+.alert.error,.alert.success{display:block;animation:alertIn .4s var(--out)}
+.alert.error{background:var(--error-bg);color:var(--error-text);border:1px solid color-mix(in srgb,var(--error-text) 28%,transparent)}
+.alert.success{background:var(--success-bg);color:var(--success-text);border:1px solid color-mix(in srgb,var(--success-text) 28%,transparent)}
+@keyframes alertIn{from{opacity:0;transform:translateY(-6px)}}
 
-        .tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            background: #000;
-            border-radius: 8px;
-            padding: .25rem;
-            border: 1px solid var(--border);
-        }
-        .tab-btn {
-            flex: 1;
-            padding: .5rem;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            border-radius: 6px;
-            font-size: .85rem;
-            cursor: pointer;
-            transition: all .2s;
-        }
-        .tab-btn.active { background: var(--surface); color: var(--text-main); font-weight: 500; }
+.stage{position:relative}
+.screen.enter,.form-view.enter{animation:fadeUp .45s var(--out)}
 
-        .form-view { display: none; }
-        .form-view.active { display: block; }
+.tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;margin-bottom:1.5rem;background:var(--field);border:1px solid var(--border);border-radius:12px}
+.tab-indicator{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:9px;background:var(--tab);border:1px solid var(--border);transition:transform .45s var(--ease)}
+.tabs[data-active=code] .tab-indicator{transform:translateX(100%)}
+.tab-btn{position:relative;z-index:1;padding:.55rem;background:transparent;border:none;color:var(--text-muted);border-radius:9px;font-size:.88rem;cursor:pointer;transition:color .3s}
+.tab-btn:hover{color:var(--text-main)}
+.tab-btn.active{color:var(--text-main);font-weight:500}
+.form-view{display:none}.form-view.active{display:block}
 
-        .input-group { margin-bottom: 1rem; }
-        .input-group label { display: block; font-size: .8rem; margin-bottom: .4rem; color: var(--text-muted); }
-        input {
-            width: 100%;
-            padding: .75rem;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-main);
-            font-size: .9rem;
-            outline: none;
-            transition: border .2s;
-        }
-        input:focus { border-color: #52525b; }
+.input-group{margin-bottom:1rem}
+.input-group label{display:block;font-size:.82rem;margin-bottom:.4rem;color:var(--text-muted)}
+input{width:100%;padding:.8rem .95rem;background:var(--field);border:1px solid var(--border);border-radius:10px;color:var(--text-main);font-size:.95rem;outline:none;transition:border-color .25s,box-shadow .3s,background-color .4s}
+input::placeholder{color:var(--text-muted);opacity:.6}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--ring)}
+input:-webkit-autofill{-webkit-text-fill-color:var(--text-main);box-shadow:0 0 0 1000px var(--field) inset;caret-color:var(--text-main)}
 
-        .btn {
-            width: 100%;
-            padding: .75rem;
-            border-radius: 6px;
-            font-size: .875rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: .6rem;
-            border: none;
-            transition: all .2s;
-            margin-bottom: .75rem;
-        }
-        .btn-primary { background: var(--primary); color: var(--primary-invert); }
-        .btn-primary:hover:not(:disabled) { background: #e4e4e7; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover:not(:disabled) { background: #27272a; }
-        .btn-link {
-            display: block;
-            width: max-content;
-            margin: -.15rem 0 1rem auto;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: .78rem;
-            cursor: pointer;
-        }
-        .btn-link:hover { color: var(--text-main); text-decoration: underline; }
+.btn{position:relative;overflow:hidden;width:100%;padding:.8rem;border-radius:10px;font-size:.92rem;font-weight:500;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:.6rem;border:none;margin-bottom:.75rem;
+transition:transform .25s var(--out),box-shadow .3s,background-color .3s,border-color .3s,filter .3s}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:active:not(:disabled){transform:translateY(0) scale(.99)}
+.btn-primary{background:var(--primary);color:var(--on-primary);box-shadow:var(--pshadow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.07)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-main)}
+.btn-outline:hover:not(:disabled){background:var(--tab);border-color:var(--accent)}
+.btn-link{display:block;width:max-content;margin:-.15rem 0 1rem auto;background:transparent;border:none;color:var(--text-muted);font-size:.8rem;cursor:pointer;transition:color .25s}
+.btn-link:hover{color:var(--accent);text-decoration:underline}
 
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 1.25rem 0;
-            color: var(--text-muted);
-            font-size: .75rem;
-        }
-        .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
-        .divider:not(:empty)::before { margin-right: 1rem; }
-        .divider:not(:empty)::after { margin-left: 1rem; }
+.divider,.footer-divider{display:flex;align-items:center;gap:1rem;margin:1.25rem 0;color:var(--text-muted);font-size:.78rem}
+.divider::before,.divider::after,.footer-divider::before,.footer-divider::after{content:"";flex:1;border-top:1px solid var(--border)}
+.password-rule,.code-notice{display:block;margin:-.55rem 0 1rem;color:var(--text-muted);font-size:.75rem;line-height:1.45}
+.code-notice{margin:.2rem 0 0;text-align:center}
+.create-account-footer{margin-top:1.25rem}
+.create-account-footer .footer-divider{margin-top:1rem}
+#create-account-panel h2,#verification-panel h2{font-family:var(--sans);font-size:1.45rem;margin-bottom:.45rem}
+.create-account-description,#verification-panel p{color:var(--text-muted);font-size:.84rem;line-height:1.5;margin-bottom:1rem}
+#verification-panel{text-align:center}
+.create-account-back{margin:.2rem auto 0}
 
-        .password-rule, .code-notice {
-            display: block;
-            margin: -.55rem 0 1rem;
-            color: var(--text-muted);
-            font-size: .72rem;
-            line-height: 1.4;
-        }
-        .code-notice { margin: .2rem 0 0; text-align: center; }
+.progress-wrap{display:none;margin:.25rem 0 1rem}.progress-wrap.show{display:block;animation:fadeUp .35s var(--out)}
+.progress-label{display:flex;justify-content:space-between;color:var(--text-muted);font-size:.75rem;margin-bottom:.4rem}
+.progress-track{height:6px;width:100%;background:var(--field);border:1px solid var(--border);border-radius:999px;overflow:hidden}
+.progress-bar{width:0;height:100%;background:linear-gradient(90deg,var(--accent-lo),var(--accent-hi));border-radius:inherit;transition:width .3s var(--out)}
 
-        .progress-wrap {
-            display: none;
-            margin: .25rem 0 1rem;
-        }
-        .progress-wrap.show { display: block; }
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-muted);
-            font-size: .72rem;
-            margin-bottom: .4rem;
-        }
-        .progress-track {
-            height: 6px;
-            width: 100%;
-            background: #000;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: var(--primary);
-            border-radius: inherit;
-            transition: width .15s ease;
-        }
+#verifying-screen{position:fixed;inset:0;z-index:9999;display:flex;justify-content:center;align-items:center;padding:1rem;background:var(--bg);opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+#verifying-screen.show{opacity:1;visibility:visible}
+.verifying-card{width:100%;max-width:420px;text-align:center;background:var(--solid);border:1px solid var(--border);border-radius:var(--r);padding:2rem;box-shadow:var(--shadow)}
+.verifying-card h2{font-family:var(--sans);font-size:1.4rem;margin:1rem 0 .5rem}
+.verifying-card p{color:var(--text-muted);font-size:.86rem;line-height:1.5}
+.spinner{width:36px;height:36px;margin:auto;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-        .verification-panel { display: none; text-align: center; }
-        .verification-panel.show { display: block; }
-        .verification-panel h2 { font-size: 1rem; margin-bottom: .6rem; }
-        .verification-panel p { color: var(--text-muted); font-size: .82rem; line-height: 1.5; margin-bottom: 1rem; }
-
-        #verifying-screen {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: var(--bg);
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-        #verifying-screen.show { display: flex; }
-        .verifying-card {
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,.45);
-        }
-        .verifying-card h2 { font-size: 1.05rem; margin: 1rem 0 .5rem; }
-        .verifying-card p { color: var(--text-muted); font-size: .85rem; line-height: 1.5; }
-        .spinner {
-            width: 34px;
-            height: 34px;
-            margin: auto;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin .8s linear infinite;
-        }
-        .small-spinner {
-            width: 16px;
-            height: 16px;
-            border-width: 2px;
-            margin: 0;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-
-        .create-account-footer { margin-top: 1.25rem; }
-        .footer-divider { display:flex; align-items:center; gap:.7rem; margin:1rem 0; color:var(--text-muted); font-size:.72rem; }
-        .footer-divider::before,.footer-divider::after { content:""; flex:1; border-top:1px solid var(--border); }
-        .create-account-panel { margin-top:1rem; }
-        .create-account-panel[hidden] { display:none; }
-        .create-account-panel h2 { font-size:1rem; margin-bottom:.45rem; }
-        .create-account-description { color:var(--text-muted); font-size:.78rem; line-height:1.45; margin-bottom:1rem; }
-        .create-account-back { margin:.2rem auto 0; }
-
-        @media (max-width: 460px) {
-            .auth-card { padding: 1.35rem; }
-        }
-    </style>
+@media(max-width:460px){.auth-card{padding:2rem 1.35rem 1.6rem}.header h1{font-size:1.5rem}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
-    <div id="verifying-screen" aria-live="polite">
-        <div class="verifying-card">
-            <div class="spinner"></div>
-            <h2>Wait, we are verifying your connection.</h2>
-            <p>Please wait while we securely verify your connection.</p>
-        </div>
+<div class="backdrop" aria-hidden="true"></div>
+
+<button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch to light theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+</button>
+
+<div id="verifying-screen" aria-live="polite">
+    <div class="verifying-card">
+        <div class="spinner"></div>
+        <h2>Verifying your connection</h2>
+        <p>Please wait while we securely verify your connection.</p>
     </div>
+</div>
 
-    <main class="auth-card">
-        <div class="header">
-            <h1>AlphaTonices AP</h1>
-            <p>Access Gateway</p>
+<main class="auth-card">
+    <header class="header">
+        <div class="crest" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><rect class="ring" pathLength="1" x="4" y="4" width="40" height="40" rx="12"/><path class="jewel" d="M15.5 33 24 14l8.5 19M18.8 27h10.4"/></svg>
+        </div>
+        <h1>AlphaTonices AP</h1>
+        <p>Access Gateway</p>
+    </header>
+
+    <div class="alert" id="message-alert" role="alert"></div>
+
+    <div class="stage" id="stage">
+        <div class="screen" id="screen-signin">
+            <div class="tabs" id="main-tabs" data-active="account" role="tablist">
+                <span class="tab-indicator"></span>
+                <button class="tab-btn active" id="tab-btn-account" type="button" role="tab" aria-selected="true">Account</button>
+                <button class="tab-btn" id="tab-btn-code" type="button" role="tab" aria-selected="false">Access Code</button>
+            </div>
+
+            <section id="view-account" class="form-view active">
+                <div id="account-form">
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="name@example.com" autocomplete="email">
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+                    </div>
+                    <button class="btn btn-primary" id="btn-email-login" type="button">Sign in with Email</button>
+                    <button class="btn-link" id="btn-forgot-password" type="button">Forgot password?</button>
+
+                    <div class="divider">OR</div>
+
+                    <button class="btn btn-outline" id="btn-google" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        Google
+                    </button>
+                    <button class="btn btn-outline" id="btn-github" type="button">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        GitHub
+                    </button>
+                </div>
+            </section>
+
+            <section id="view-code" class="form-view">
+                <div class="input-group">
+                    <label for="access-code">Clearance Code</label>
+                    <input type="password" id="access-code" placeholder="Enter access code" autocomplete="off">
+                </div>
+                <div class="progress-wrap" id="hash-progress-wrap" aria-live="polite">
+                    <div class="progress-label"><span id="hash-progress-text">Hashing access code securely…</span><span id="hash-progress-percent">0%</span></div>
+                    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar" id="hash-progress-bar"></div></div>
+                </div>
+                <button class="btn btn-primary" id="btn-code-login" type="button">Validate &amp; Enter</button>
+                <p class="code-notice">Access-code accounts are temporary and are automatically deleted after 30 days.</p>
+            </section>
+
+            <section class="create-account-footer" id="create-account-footer">
+                <div class="footer-divider"><span>New here?</span></div>
+                <button class="btn btn-outline" id="btn-show-create-account" type="button">Create New Account</button>
+            </section>
         </div>
 
-        <div class="alert" id="message-alert" role="alert"></div>
-
-        <div class="tabs" id="main-tabs">
-            <button class="tab-btn active" id="tab-btn-account" type="button">Account</button>
-            <button class="tab-btn" id="tab-btn-code" type="button">Access Code</button>
-        </div>
-
-        <section id="view-account" class="form-view active">
-            <div id="account-form">
-                <div class="input-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" placeholder="name@example.com" autocomplete="email">
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="••••••••" minlength="8" autocomplete="current-password">
-                </div>
-                <small class="password-rule">Password must be at least 8 characters and contain at least one uppercase letter.</small>
-                <button class="btn btn-primary" id="btn-email-login" type="button">Continue with Email</button>
-                <button class="btn-link" id="btn-forgot-password" type="button">Forgot password?</button>
-
-                <div class="divider">OR</div>
-
-                <button class="btn btn-outline" id="btn-google" type="button">
-                    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                    Google
-                </button>
-                <button class="btn btn-outline" id="btn-github" type="button">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                    GitHub
-                </button>
-            </div>
-
-            <div class="verification-panel" id="verification-panel">
-                <h2>Verify your email</h2>
-                <p id="verification-text">We sent a verification email. Open it and verify your email address before continuing.</p>
-                <button class="btn btn-primary" id="btn-check-verification" type="button">I've verified my email</button>
-                <button class="btn btn-outline" id="btn-resend-verification" type="button">Resend verification email</button>
-                <button class="btn-link" id="btn-back-account" type="button">Back to sign in</button>
-            </div>
-        </section>
-
-        <section id="view-code" class="form-view">
-            <div class="input-group">
-                <label for="access-code">Clearance Code</label>
-                <input type="password" id="access-code" placeholder="Enter access code" autocomplete="off">
-            </div>
-
-            <div class="progress-wrap" id="hash-progress-wrap" aria-live="polite">
-                <div class="progress-label">
-                    <span id="hash-progress-text">Hashing access code securely…</span>
-                    <span id="hash-progress-percent">0%</span>
-                </div>
-                <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                    <div class="progress-bar" id="hash-progress-bar"></div>
-                </div>
-            </div>
-
-            <button class="btn btn-primary" id="btn-code-login" type="button">Validate &amp; Enter</button>
-            <p class="code-notice">Access-code accounts are temporary and are automatically deleted after 30 days.</p>
-        </section>
-
-        <section class="create-account-footer" id="create-account-footer">
-            <div class="footer-divider"><span>New here?</span></div>
-            <button class="btn btn-outline" id="btn-show-create-account" type="button">Create New Account</button>
-        </section>
-
-        <section class="create-account-panel" id="create-account-panel" hidden>
+        <section class="screen" id="create-account-panel" hidden>
             <h2>Create New Account</h2>
             <p class="create-account-description">Create an email account and verify your email before you can continue.</p>
             <div class="input-group">
@@ -337,9 +224,110 @@
             <button class="btn-link create-account-back" id="btn-hide-create-account" type="button">Back to sign in</button>
         </section>
 
-    </main>
+        <section class="screen" id="verification-panel" hidden>
+            <h2>Verify your email</h2>
+            <p id="verification-text">We sent a verification email. Open it and verify your email address before continuing.</p>
+            <button class="btn btn-primary" id="btn-check-verification" type="button">I've verified my email</button>
+            <button class="btn btn-outline" id="btn-resend-verification" type="button">Resend verification email</button>
+            <button class="btn-link create-account-back" id="btn-back-account" type="button">Back to sign in</button>
+        </section>
+    </div>
+</main>
 
-    <script type="module">
+<!-- UI layer: theme, tabs, screens, alerts. Classic script so it keeps working even if Firebase fails to load. -->
+<script>
+(function () {
+    "use strict";
+    var $ = function (id) { return document.getElementById(id); };
+    var root = document.documentElement;
+    var still = function () { return matchMedia("(prefers-reduced-motion: reduce)").matches; };
+
+    /* ---------- Theme ---------- */
+    var toggle = $("theme-toggle"), meta = document.querySelector('meta[name="theme-color"]');
+    function paint(t) {
+        root.setAttribute("data-theme", t);
+        var next = t === "dark" ? "light" : "dark";
+        toggle.setAttribute("aria-label", "Switch to " + next + " theme");
+        toggle.title = "Switch to " + next + " theme";
+        if (meta) meta.content = t === "dark" ? "#0f1115" : "#f5f6f8";
+        try { localStorage.setItem("alphaTonicesTheme", t); } catch (e) {}
+    }
+    paint(root.getAttribute("data-theme"));
+    toggle.addEventListener("click", function () {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        if (!document.startViewTransition || still()) {
+            root.classList.add("theme-fade"); paint(next);
+            setTimeout(function () { root.classList.remove("theme-fade"); }, 500);
+            return;
+        }
+        var b = toggle.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height / 2;
+        var r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+        document.startViewTransition(function () { paint(next); }).ready.then(function () {
+            root.animate({ clipPath: ["circle(0px at " + x + "px " + y + "px)", "circle(" + r + "px at " + x + "px " + y + "px)"] },
+                { duration: 700, easing: "cubic-bezier(.65,0,.35,1)", pseudoElement: "::view-transition-new(root)" });
+        }).catch(function () {});
+    });
+
+    /* ---------- Alerts ---------- */
+    var alertBox = $("message-alert");
+    function showMessage(msg, type) {
+        alertBox.textContent = msg; alertBox.className = "alert"; void alertBox.offsetWidth;
+        alertBox.className = "alert " + (type || "error");
+    }
+    function clearMessage() { alertBox.textContent = ""; alertBox.className = "alert"; }
+
+    /* ---------- Smooth height morph + screens + tabs ---------- */
+    var stage = $("stage"), tabs = $("main-tabs");
+    var screens = { signin: $("screen-signin"), create: $("create-account-panel"), verify: $("verification-panel") };
+    var tabBtns = { account: $("tab-btn-account"), code: $("tab-btn-code") };
+    var views = { account: $("view-account"), code: $("view-code") };
+    var curScreen = "signin", curTab = "account";
+
+    function replay(el) { el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); }
+    function morph(change) {
+        if (still() || !stage.animate) { change(); return; }
+        var from = stage.getBoundingClientRect().height;
+        change();
+        var to = stage.getBoundingClientRect().height;
+        if (Math.abs(from - to) < 2) return;
+        stage.style.overflow = "hidden";
+        var a = stage.animate([{ height: from + "px" }, { height: to + "px" }], { duration: 400, easing: "cubic-bezier(.65,0,.35,1)" });
+        a.onfinish = a.oncancel = function () { stage.style.overflow = ""; };
+    }
+    function applyTab(which, animate) {
+        curTab = which; tabs.dataset.active = which;
+        Object.keys(views).forEach(function (k) {
+            var on = k === which;
+            tabBtns[k].classList.toggle("active", on);
+            tabBtns[k].setAttribute("aria-selected", String(on));
+            views[k].classList.toggle("active", on);
+            if (on && animate) replay(views[k]);
+        });
+    }
+    function selectTab(which) { if (which === curTab) return; clearMessage(); morph(function () { applyTab(which, true); }); }
+    function showScreen(name, tab) {
+        if (name === curScreen && !tab) return;
+        morph(function () {
+            Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== name; });
+            if (name !== curScreen) replay(screens[name]);
+            if (tab) applyTab(tab, false);
+            curScreen = name;
+        });
+    }
+    function showVerification(text) { $("verification-text").textContent = text; showScreen("verify"); }
+
+    tabBtns.account.addEventListener("click", function () { selectTab("account"); });
+    tabBtns.code.addEventListener("click", function () { selectTab("code"); });
+    $("btn-show-create-account").addEventListener("click", function () {
+        clearMessage(); showScreen("create"); $("new-account-email").focus({ preventScroll: true });
+    });
+    $("btn-hide-create-account").addEventListener("click", function () { clearMessage(); showScreen("signin"); });
+
+    window.UI = { showMessage: showMessage, clearMessage: clearMessage, showScreen: showScreen, showVerification: showVerification };
+})();
+</script>
+
+<script type="module" onerror="window.UI && window.UI.showMessage('Could not load the sign-in service. Check your connection and refresh the page.')">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import {
             getAuth,
@@ -350,11 +338,13 @@
             signInWithPopup,
             GoogleAuthProvider,
             GithubAuthProvider,
-            signInAnonymously,
+            signInWithCustomToken,
             reload,
             signOut
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA2kQNio81sFpQbVo-6rg6vghjIGWCIfgI",
@@ -367,6 +357,12 @@
         };
 
         const app = initializeApp(firebaseConfig);
+
+        // Optional bot protection: paste your reCAPTCHA v3 site key (see SETUP.md).
+        const APP_CHECK_SITE_KEY = "";
+        if (APP_CHECK_SITE_KEY) {
+            initializeAppCheck(app, { provider: new ReCaptchaV3Provider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true });
+        }
         const auth = getAuth(app);
         const db = getFirestore(app);
 
@@ -391,33 +387,31 @@
         const hashProgressText = document.getElementById("hash-progress-text");
         const progressTrack = hashProgressWrap.querySelector(".progress-track");
 
-        function showMessage(message, type = "error") {
-            alertBox.textContent = message;
-            alertBox.className = `alert ${type}`;
-            alertBox.style.display = "block";
-        }
+        const { showMessage, clearMessage, showScreen } = window.UI;
 
-        function clearMessage() {
-            alertBox.textContent = "";
-            alertBox.style.display = "none";
-            alertBox.className = "alert";
-        }
+        // Blocks the auto-redirect while an interactive sign-in is still being logged.
+        let loginInFlight = false;
+        // Set to false to stop emailing already-verified users on every login.
+        const SEND_VERIFICATION_ON_EVERY_LOGIN = false;
 
         function formatAuthError(err) {
             const messages = {
-                "auth/invalid-credential": "Incorrect email or password.",
+                "auth/invalid-credential": "Incorrect email or password. New here? Use Create New Account below.",
                 "auth/wrong-password": "Incorrect email or password.",
                 "auth/user-not-found": "No account was found for this email.",
                 "auth/invalid-email": "Please enter a valid email address.",
                 "auth/email-already-in-use": "An account with this email already exists. Please sign in.",
-                "auth/weak-password": "Password must be at least 6 characters.",
+                "auth/weak-password": "Choose a stronger password: at least 8 characters with one uppercase letter.",
                 "auth/popup-blocked": "The browser blocked the sign-in popup. Please allow popups for this page.",
                 "auth/popup-closed-by-user": "The sign-in popup was closed.",
                 "auth/operation-not-allowed": "This sign-in method is not enabled in Firebase Authentication.",
                 "auth/unauthorized-domain": "This website domain is not authorized in Firebase Authentication.",
                 "auth/network-request-failed": "Network error. Check your internet connection and try again.",
                 "auth/too-many-requests": "Too many attempts. Please wait a little and try again.",
-                "auth/missing-email": "Please enter your email address first."
+                "auth/missing-email": "Please enter your email address first.",
+                "auth/account-exists-with-different-credential": "An account with this email already exists using a different sign-in method. Use the original method.",
+                "auth/user-disabled": "This account has been disabled.",
+                "auth/admin-restricted-operation": "Access-code sign-in is currently disabled."
             };
             return messages[err.code] || (err.code ? `${err.code}: ${err.message}` : "Authentication failed.");
         }
@@ -428,20 +422,80 @@
             return null;
         }
 
-        async function logSessionAndRedirect(user, method) {
+        const SESSION_STORAGE_KEY = "alphaTonicesSessionId";
+        const MAIN_WEBSITE_URL = "https://mymap.icu/verify.php?verify";
+
+        function getStoredSessionId() {
             try {
-                await setDoc(doc(db, "users", user.uid), {
-                    email: user.email || "Anonymous",
-                    uid: user.uid,
-                    authMethod: method,
-                    lastLogin: serverTimestamp()
-                }, { merge: true });
+                return localStorage.getItem(SESSION_STORAGE_KEY);
+            } catch (err) {
+                console.warn("Session storage is unavailable:", err.message);
+                return null;
+            }
+        }
+
+        function createSessionId() {
+            if (window.crypto && typeof crypto.randomUUID === "function") {
+                return crypto.randomUUID();
+            }
+            return `sess_${Date.now()}_${Math.random().toString(36).slice(2)}_${Math.random().toString(36).slice(2)}`;
+        }
+
+        function saveSessionId(sessionId) {
+            try {
+                localStorage.setItem(SESSION_STORAGE_KEY, sessionId);
+            } catch (err) {
+                console.warn("Session ID could not be saved:", err.message);
+            }
+        }
+
+        function clearStoredSessionId() {
+            try {
+                localStorage.removeItem(SESSION_STORAGE_KEY);
+            } catch (err) {
+                console.warn("Session ID could not be cleared:", err.message);
+            }
+        }
+
+        async function logSessionAndRedirect(user, method) {
+            sessionRedirectStarted = true;
+            verifyingScreen.classList.add("show");
+            const sessionId = getStoredSessionId() || createSessionId();
+            saveSessionId(sessionId);
+
+            try {
+                // setDoc waits for server confirmation; cap it so an offline user is never stuck.
+                await Promise.race([
+                    setDoc(doc(db, "users", user.uid), {
+                        email: user.email || "Anonymous",
+                        uid: user.uid,
+                        authMethod: method,
+                        sessionId: sessionId,
+                        lastLogin: serverTimestamp()
+                    }, { merge: true }),
+                    new Promise(resolve => setTimeout(resolve, 4000))
+                ]);
             } catch (err) {
                 console.warn("Firestore write skipped:", err.message);
             }
 
+            window.location.replace(MAIN_WEBSITE_URL);
+        }
+
+        // If this browser already has a saved session ID and Firebase restores the
+        // authenticated user, skip the login screen and continue directly.
+        let sessionRedirectStarted = false;
+        function continueExistingSession(user) {
+            if (sessionRedirectStarted || loginInFlight || !user || !getStoredSessionId()) return;
+
+            // Email/password accounts must still be verified before auto-entry.
+            if (user.providerData.some(provider => provider.providerId === "password") && !user.emailVerified) {
+                return;
+            }
+
+            sessionRedirectStarted = true;
             verifyingScreen.classList.add("show");
-            window.location.href = "https://mymap.icu/verify.php?verify=YYE9JC";
+            window.location.replace(MAIN_WEBSITE_URL);
         }
 
         function setAccountButtonsDisabled(disabled) {
@@ -455,8 +509,7 @@
         }
 
         async function showEmailVerification(user, isNewAccount = false) {
-            accountForm.style.display = "none";
-            verificationPanel.classList.add("show");
+            showScreen("verify");
             verificationText.textContent = isNewAccount
                 ? `A verification email was sent to ${user.email}. Open it and verify your email address, then return here.`
                 : `A verification email was sent to ${user.email}. Verify your email address, then return here.`;
@@ -498,41 +551,30 @@
 
             if (!email || !password) return showMessage("Email and password are required.");
             if (!emailInput.validity.valid) return showMessage("Please enter a valid email address.");
-            const passwordError = validatePassword(password);
-            if (passwordError) return showMessage(passwordError);
 
             setAccountButtonsDisabled(true);
+            loginInFlight = true;
             emailLoginButton.textContent = "Checking account…";
 
             try {
-                let credential;
-                let isNewAccount = false;
-
-                try {
-                    credential = await signInWithEmailAndPassword(auth, email, password);
-                } catch (err) {
-                    // Only create an account when Firebase explicitly says the account does not exist.
-                    if (err.code !== "auth/user-not-found") throw err;
-                    credential = await createUserWithEmailAndPassword(auth, email, password);
-                    isNewAccount = true;
-                }
-
+                const credential = await signInWithEmailAndPassword(auth, email, password);
                 const user = credential.user;
 
-                // Always send a fresh verification email on email/password login.
-                // For already verified users, login continues immediately after the email is sent.
                 if (!user.emailVerified) {
-                    await sendVerification(user);
-                    await showEmailVerification(user, isNewAccount);
-                    showMessage("Verification email sent. Verify your email before continuing.", "success");
+                    let sent = true;
+                    try { await sendVerification(user); } catch (e) { sent = false; console.warn(e.message); }
+                    await showEmailVerification(user, false);
+                    if (sent) showMessage("Verification email sent. Verify your email before continuing.", "success");
+                    else showMessage("We couldn't send a new verification email right now. Check your inbox for an earlier one, or try Resend in a minute.");
                     return;
                 }
 
-                // Verified users also receive a verification email as requested, but do not get blocked.
-                try {
-                    await sendVerification(user);
-                } catch (verificationError) {
-                    console.warn("Verification email could not be sent:", verificationError.message);
+                if (SEND_VERIFICATION_ON_EVERY_LOGIN) {
+                    try {
+                        await sendVerification(user);
+                    } catch (verificationError) {
+                        console.warn("Verification email could not be sent:", verificationError.message);
+                    }
                 }
 
                 await logSessionAndRedirect(user, "email");
@@ -540,6 +582,7 @@
                 showMessage(formatAuthError(err));
             } finally {
                 setAccountButtonsDisabled(false);
+                loginInFlight = false;
                 emailLoginButton.textContent = "Continue with Email";
             }
         });
@@ -548,6 +591,7 @@
         checkVerificationButton.addEventListener("click", async () => {
             clearMessage();
             checkVerificationButton.disabled = true;
+            loginInFlight = true;
             checkVerificationButton.textContent = "Checking…";
             try {
                 if (!auth.currentUser) {
@@ -563,6 +607,7 @@
                 showMessage(err.code ? formatAuthError(err) : err.message);
             } finally {
                 checkVerificationButton.disabled = false;
+                loginInFlight = false;
                 checkVerificationButton.textContent = "I've verified my email";
             }
         });
@@ -588,44 +633,38 @@
 
         backAccountButton.addEventListener("click", async () => {
             clearMessage();
+            clearStoredSessionId();
             try { await signOut(auth); } catch (err) { console.warn(err); }
-            verificationPanel.classList.remove("show");
-            accountForm.style.display = "block";
+            showScreen("signin", "account");
         });
 
-        // Google Login
-        document.getElementById("btn-google").addEventListener("click", async () => {
+        // Restore Firebase authentication and check the saved browser session.
+        // onAuthStateChanged fires after Firebase has restored its persisted auth state.
+        auth.onAuthStateChanged((user) => {
+            continueExistingSession(user);
+        });
+
+        // Google / GitHub login (shared flow; buttons lock while the popup is open)
+        const socialButtons = [document.getElementById("btn-google"), document.getElementById("btn-github")];
+        async function socialLogin(provider, method) {
             clearMessage();
-            const provider = new GoogleAuthProvider();
+            loginInFlight = true;
+            socialButtons.forEach(b => b.disabled = true);
             try {
                 const credential = await signInWithPopup(auth, provider);
-                await logSessionAndRedirect(credential.user, "google");
+                await logSessionAndRedirect(credential.user, method);
             } catch (err) {
-                if (err.code !== "auth/popup-closed-by-user") showMessage(formatAuthError(err));
+                if (!["auth/popup-closed-by-user", "auth/cancelled-popup-request"].includes(err.code)) showMessage(formatAuthError(err));
+            } finally {
+                loginInFlight = false;
+                socialButtons.forEach(b => b.disabled = false);
             }
-        });
-
-        // GitHub Login
-        document.getElementById("btn-github").addEventListener("click", async () => {
-            clearMessage();
-            const provider = new GithubAuthProvider();
-            try {
-                const credential = await signInWithPopup(auth, provider);
-                await logSessionAndRedirect(credential.user, "github");
-            } catch (err) {
-                if (err.code !== "auth/popup-closed-by-user") showMessage(formatAuthError(err));
-            }
-        });
-
-        // SHA-256 for access-code validation.
-        async function hashString(str) {
-            const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-            return Array.from(new Uint8Array(buffer))
-                .map(byte => byte.toString(16).padStart(2, "0"))
-                .join("");
         }
+        socialButtons[0].addEventListener("click", () => socialLogin(new GoogleAuthProvider(), "google"));
+        socialButtons[1].addEventListener("click", () => socialLogin(new GithubAuthProvider(), "github"));
 
-        const TARGET_HASH = "a9c682f763d1fd68971e80a1ff40c41e8bf71c8823b873a4e6ca9c3409e11562";
+        // Access codes are verified on the server (Cloud Function). No hash or secret lives in this page.
+        const verifyAccessCode = httpsCallable(getFunctions(app), "verifyAccessCode");
 
         function setHashProgress(value, text) {
             const percent = Math.max(0, Math.min(100, Math.round(value)));
@@ -634,18 +673,20 @@
             hashProgressText.textContent = text;
             progressTrack.setAttribute("aria-valuenow", String(percent));
         }
+        function showHashProgress() { hashProgressWrap.classList.add("show"); setHashProgress(10, "Contacting secure server…"); }
+        function hideHashProgress() { hashProgressWrap.classList.remove("show"); setHashProgress(0, "Contacting secure server…"); }
 
-        function showHashProgress() {
-            hashProgressWrap.classList.add("show");
-            setHashProgress(0, "Preparing secure hash…");
+        function accessCodeError(err) {
+            const map = {
+                "functions/permission-denied": "Invalid access code.",
+                "functions/resource-exhausted": "Too many attempts. Please wait 15 minutes and try again.",
+                "functions/invalid-argument": "Please enter the clearance access code.",
+                "functions/failed-precondition": "Security check failed. Refresh the page and try again.",
+                "functions/unavailable": "Server unreachable. Check your connection and try again."
+            };
+            return map[err.code] || formatAuthError(err);
         }
 
-        function hideHashProgress() {
-            hashProgressWrap.classList.remove("show");
-            setHashProgress(0, "Hashing access code securely…");
-        }
-
-        // Access Code (Anonymous Auth) with visible hashing progress.
         codeLoginButton.addEventListener("click", async () => {
             clearMessage();
             const code = accessCodeInput.value.trim();
@@ -653,81 +694,37 @@
 
             codeLoginButton.disabled = true;
             accessCodeInput.disabled = true;
+            loginInFlight = true;
             showHashProgress();
 
             try {
-                // The digest itself is extremely fast, so the progress UI is animated briefly
-                // to make the secure hashing step visibly clear to the user.
-                setHashProgress(15, "Preparing secure hash…");
-                await new Promise(resolve => requestAnimationFrame(resolve));
-                setHashProgress(40, "Hashing access code…");
-                await new Promise(resolve => setTimeout(resolve, 80));
-                const hashedInput = await hashString(code);
-                setHashProgress(85, "Comparing secure hash…");
-                await new Promise(resolve => setTimeout(resolve, 80));
-
-                if (hashedInput !== TARGET_HASH) {
-                    setHashProgress(100, "Hash complete — access code rejected.");
-                    showMessage("Invalid access code.");
-                    return;
-                }
-
-                setHashProgress(100, "Hash verified — signing you in…");
-                const credential = await signInAnonymously(auth);
-                await logSessionAndRedirect(credential.user, "anonymous_code");
+                const { data } = await verifyAccessCode({ code });
+                setHashProgress(75, "Code accepted, signing you in…");
+                const credential = await signInWithCustomToken(auth, data.token);
+                setHashProgress(100, "Signed in.");
+                await logSessionAndRedirect(credential.user, "access_code");
             } catch (err) {
-                showMessage(formatAuthError(err));
+                setHashProgress(100, "Access denied.");
+                showMessage(accessCodeError(err));
             } finally {
                 codeLoginButton.disabled = false;
                 accessCodeInput.disabled = false;
-                if (!verifyingScreen.classList.contains("show")) {
-                    setTimeout(hideHashProgress, 700);
-                }
+                loginInFlight = false;
+                if (!verifyingScreen.classList.contains("show")) setTimeout(hideHashProgress, 700);
             }
         });
 
-        // Main tab navigation.
-        const tabAccount = document.getElementById("tab-btn-account");
-        const tabCode = document.getElementById("tab-btn-code");
-        const viewAccount = document.getElementById("view-account");
-        const viewCode = document.getElementById("view-code");
-
-        tabAccount.addEventListener("click", () => {
-            clearMessage();
-            tabAccount.classList.add("active");
-            tabCode.classList.remove("active");
-            viewAccount.classList.add("active");
-            viewCode.classList.remove("active");
-        });
-
-        tabCode.addEventListener("click", () => {
-            clearMessage();
-            tabCode.classList.add("active");
-            tabAccount.classList.remove("active");
-            viewCode.classList.add("active");
-            viewAccount.classList.remove("active");
-        });
-
-        // Dedicated new-account flow.
-        const createAccountFooter = document.getElementById("create-account-footer");
-        const createAccountPanel = document.getElementById("create-account-panel");
-        const showCreateAccountButton = document.getElementById("btn-show-create-account");
-        const hideCreateAccountButton = document.getElementById("btn-hide-create-account");
         const createAccountButton = document.getElementById("btn-create-account");
         const newAccountEmail = document.getElementById("new-account-email");
         const newAccountPassword = document.getElementById("new-account-password");
 
-        showCreateAccountButton.addEventListener("click", () => {
-            clearMessage();
-            createAccountFooter.hidden = true;
-            createAccountPanel.hidden = false;
-            newAccountEmail.focus();
-        });
-
-        hideCreateAccountButton.addEventListener("click", () => {
-            clearMessage();
-            createAccountPanel.hidden = true;
-            createAccountFooter.hidden = false;
+        // Enter key submits each form
+        [[[emailInput, passwordInput], emailLoginButton],
+         [[accessCodeInput], codeLoginButton],
+         [[newAccountEmail, newAccountPassword], createAccountButton]].forEach(([inputs, button]) => {
+            inputs.forEach(input => input.addEventListener("keydown", e => {
+                if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); button.click(); }
+            }));
         });
 
         createAccountButton.addEventListener("click", async () => {
@@ -745,15 +742,12 @@
 
             try {
                 const credential = await createUserWithEmailAndPassword(auth, email, password);
-                await sendVerification(credential.user);
+                try { await sendVerification(credential.user); } catch (e) { console.warn(e.message); }
 
-                accountForm.style.display = "none";
-                verificationPanel.classList.add("show");
+                showScreen("verify");
                 verificationText.textContent =
                     `A verification email was sent to ${email}. Open it, verify your email address, then return here and tap "I've verified my email".`;
 
-                createAccountPanel.hidden = true;
-                createAccountFooter.hidden = false;
                 showMessage("Account created. Verification email sent.", "success");
             } catch (err) {
                 showMessage(formatAuthError(err));
